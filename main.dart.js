@@ -46304,7 +46304,7 @@ if(n.c==null){s=1
 break}n.ab(new A.aui(n,k))
 j=B.d.aa(k.a,5)
 i=B.d.aa(k.b,5)
-n.c.a8(t.J).f.e9(A.dJ(null,null,null,null,null,B.u,null,A.bx("Current location found: "+j+", "+i+". Enter trip distance manually for now.",null,null,null,null,null,null),null,B.ae,null,null,null,null,null,null,null,null,null,null))
+n.c.a8(t.J).f.e9(A.dJ(null,null,null,null,null,B.u,null,A.bx("Current location found: "+j+", "+i+". Enter your destination to estimate the road fare.",null,null,null,null,null,null),null,B.ae,null,null,null,null,null,null,null,null,null,null))
 p=2
 s=6
 break
