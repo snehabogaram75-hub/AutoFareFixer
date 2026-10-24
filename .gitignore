@@ -39,3 +39,19 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Local backups and secrets
+*.backup
+.env
+.env.*
+!.env.example
+
+# Flutter generated files
+flutter_app/.dart_tool/
+flutter_app/.flutter-plugins-dependencies
+flutter_app/build/
+flutter_app/.packages
+flutter_app/coverage/
+
+# Generated dependencies
+node_modules/
