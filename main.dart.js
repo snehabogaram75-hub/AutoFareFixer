@@ -46661,14 +46661,14 @@ m=A.tf(null,null,"112",null,null,null,null,"tel",null)
 s=8
 return A.l(A.aGv(m,B.Jv),$async$uK)
 case 8:l=b
-if(!l&&n.c!=null)n.c.a2(t.q).f.cO(A.cA(null,null,null,null,null,B.q,null,A.b9("Could not open the dialer. Please call 112 directly.",null,null,null,null,null,null),null,B.Y,null,null,null,null,null,null,null,null,null,null))
+if(!l&&n.c!=null)n.c.a2(t.q).f.cO(A.cA(null,null,null,null,null,B.q,null,A.b9("This browser could not open the phone dialer. Please open your phone app and dial 112.",null,null,null,null,null,null),null,B.Y,null,null,null,null,null,null,null,null,null,null))
 p=2
 s=7
 break
 case 5:p=4
 i=o.pop()
 j=n.c
-if(j!=null)j.a2(t.q).f.cO(A.cA(null,null,null,null,null,B.q,null,A.b9("Please call 112 directly from your phone.",null,null,null,null,null,null),null,B.Y,null,null,null,null,null,null,null,null,null,null))
+if(j!=null)j.a2(t.q).f.cO(A.cA(null,null,null,null,null,B.q,null,A.b9("Unable to open the dialer here. Please open your phone app and dial 112 directly.",null,null,null,null,null,null),null,B.Y,null,null,null,null,null,null,null,null,null,null))
 s=7
 break
 case 4:s=2
