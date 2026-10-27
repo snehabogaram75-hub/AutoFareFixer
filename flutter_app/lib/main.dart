@@ -1484,6 +1484,30 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                     ),
+                    IconButton(
+                      tooltip: 'Share complaint',
+                      icon: const Icon(Icons.share_outlined, color: brand),
+                      onPressed: () {
+                        final text =
+                            'AutoFareFixer complaint\n'
+                            'Auto: ${item['plate']}\n'
+                            'Distance: ${item['distance']} km\n'
+                            'App estimate: ₹${item['fare']}\n'
+                            'Fare demanded: ₹${item['demanded']}\n'
+                            'Verdict: ${item['verdict'] ?? 'Not available'}\n'
+                            'Details: ${item['notes']}\n'
+                            'Time: ${item['time']}\n'
+                            '(Prepared with AutoFareFixer; not an official complaint.)';
+                        unawaited(
+                          SharePlus.instance.share(
+                            ShareParams(
+                              text: text,
+                              subject: 'AutoFareFixer complaint',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
                 const Divider(height: 24),
