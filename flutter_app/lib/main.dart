@@ -1112,11 +1112,14 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Raining now?'),
-                value: rainNow,
-                onChanged: (v) => setState(() => rainNow = v),
+              Material(
+                color: Colors.transparent,
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Raining now?'),
+                  value: rainNow,
+                  onChanged: (v) => setState(() => rainNow = v),
+                ),
               ),
               TextField(
                 controller: waitCtrl,
@@ -1531,19 +1534,25 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Text(widget.user, style: const TextStyle(color: Colors.black54)),
               const Divider(height: 28),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Fare notifications'),
-                subtitle: const Text('Local setting only; no push service'),
-                value: fareNotifications,
-                onChanged: (v) => setState(() => fareNotifications = v),
+              Material(
+                color: Colors.transparent,
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Fare notifications'),
+                  subtitle: const Text('Local setting only; no push service'),
+                  value: fareNotifications,
+                  onChanged: (v) => setState(() => fareNotifications = v),
+                ),
               ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Anonymous report label'),
-                subtitle: const Text('Controls the label shown on this screen'),
-                value: anonymous,
-                onChanged: (v) => setState(() => anonymous = v),
+              Material(
+                color: Colors.transparent,
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Anonymous report label'),
+                  subtitle: const Text('Controls the label shown on this screen'),
+                  value: anonymous,
+                  onChanged: (v) => setState(() => anonymous = v),
+                ),
               ),
               const SizedBox(height: 8),
               const Text(
