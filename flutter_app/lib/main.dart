@@ -2010,18 +2010,49 @@ class _TripHistoryCardState extends State<TripHistoryCard> {
               ],
             ),
             for (final trip in _trips)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.route_outlined),
-                title: Text(
-                  '₹${(trip['fare'] as num).toStringAsFixed(2)} · '
-                  '${(trip['distance'] as num).toStringAsFixed(2)} km',
-                ),
-                subtitle: Text(
-                  '${trip['date'] ?? ''}\n${trip['route'] ?? ''}',
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Builder(
+                builder: (context) {
+                  final km = (trip['distance'] as num).toDouble();
+                  final paid = trip['actual_fare'] as num?;
+                  final when = DateTime.tryParse('${trip['date'] ?? ''}');
+                  final expected = FareModel.predict(
+                    distanceKm: km,
+                    when: when,
+                    rain: trip['rain'] == true,
+                    waitMin: ((trip['wait_min'] ?? 0) as num).toDouble(),
+                  );
+                  final unusual =
+                      paid != null && (paid - expected).abs() > expected * 0.25;
+                  final paidLine = paid == null
+                      ? ''
+                      : '\nPaid ₹${paid.toStringAsFixed(0)} · expected ₹${expected.toStringAsFixed(0)}';
+                  return Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.route_outlined),
+                      title: Text(
+                        '₹${(trip['fare'] as num).toStringAsFixed(2)} · '
+                        '${km.toStringAsFixed(2)} km',
+                      ),
+                      subtitle: Text(
+                        '${trip['date'] ?? ''}\n${trip['route'] ?? ''}$paidLine',
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: unusual
+                          ? Chip(
+                              label: const Text(
+                                'Unusual fare',
+                                style: TextStyle(fontSize: 11),
+                              ),
+                              backgroundColor: Colors.orange.shade100,
+                              visualDensity: VisualDensity.compact,
+                            )
+                          : null,
+                    ),
+                  );
+                },
               ),
           ],
           const SizedBox(height: 4),
