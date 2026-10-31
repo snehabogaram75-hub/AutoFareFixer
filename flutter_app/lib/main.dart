@@ -759,7 +759,7 @@ class _MainScreenState extends State<MainScreen> {
               'time': item['time'],
             }),
           )
-          .timeout(const Duration(seconds: 40));
+          .timeout(const Duration(seconds: 90));
       final body = jsonDecode(res.body) as Map<String, dynamic>;
       if (res.statusCode == 200 && body['letter'] is String) {
         letter = body['letter'] as String;
