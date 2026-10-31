@@ -55,3 +55,4 @@ flutter_app/coverage/
 
 # Generated dependencies
 node_modules/
+backend/.venv/
