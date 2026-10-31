@@ -717,6 +717,86 @@ class _MainScreenState extends State<MainScreen> {
     return 'Overcharged';
   }
 
+  static const _letterApiUrl = String.fromEnvironment(
+    'LETTER_API_URL',
+    defaultValue: 'http://127.0.0.1:5000',
+  );
+  static const _letterApiToken = String.fromEnvironment('LETTER_API_TOKEN');
+
+  Future<void> _generateLetter(Map<String, String> item) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Expanded(child: Text('Writing letter...')),
+          ],
+        ),
+      ),
+    );
+    String? letter;
+    String? error;
+    try {
+      final res = await http
+          .post(
+            Uri.parse('$_letterApiUrl/complaint-letter'),
+            headers: {
+              'Content-Type': 'application/json',
+              if (_letterApiToken.isNotEmpty) 'X-App-Token': _letterApiToken,
+            },
+            body: jsonEncode({
+              'plate': item['plate'],
+              'distance': item['distance'],
+              'fare': item['fare'],
+              'demanded': item['demanded'],
+              'verdict': item['verdict'],
+              'notes': item['notes'] == 'No statement provided.'
+                  ? ''
+                  : item['notes'],
+              'time': item['time'],
+            }),
+          )
+          .timeout(const Duration(seconds: 40));
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      if (res.statusCode == 200 && body['letter'] is String) {
+        letter = body['letter'] as String;
+      } else {
+        error = 'Could not generate the letter (${res.statusCode}).';
+      }
+    } catch (_) {
+      error = 'Letter service is not reachable.';
+    }
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    if (letter == null) {
+      message(error ?? 'Could not generate the letter.');
+      return;
+    }
+    final text = letter;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Draft complaint letter'),
+        content: SingleChildScrollView(child: SelectableText(text)),
+        actions: [
+          TextButton(
+            onPressed: () => unawaited(
+              SharePlus.instance.share(ShareParams(text: text)),
+            ),
+            child: const Text('Share'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void addComplaint() {
     final d = double.tryParse(distance.text.trim());
     final requested = double.tryParse(demanded.text.trim());
@@ -1483,6 +1563,11 @@ class _MainScreenState extends State<MainScreen> {
                           fontSize: 17,
                         ),
                       ),
+                    ),
+                    IconButton(
+                      tooltip: 'Draft letter with AI',
+                      icon: const Icon(Icons.auto_awesome_outlined, color: brand),
+                      onPressed: () => _generateLetter(item),
                     ),
                     IconButton(
                       tooltip: 'Share complaint',
