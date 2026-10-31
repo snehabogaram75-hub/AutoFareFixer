@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
-MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
 APP_TOKEN = os.environ.get("APP_TOKEN", "")
 
 SYSTEM = (
@@ -55,7 +55,7 @@ def complaint_letter():
             json={
                 "model": MODEL,
                 "temperature": 0.3,
-                "max_tokens": 400,
+                "max_tokens": 1500,
                 "messages": [
                     {"role": "system", "content": SYSTEM},
                     {"role": "user", "content": facts_text},
@@ -69,7 +69,9 @@ def complaint_letter():
     if r.status_code != 200:
         return jsonify(error="llm error", status=r.status_code), 502
 
-    text = r.json()["choices"][0]["message"]["content"].strip()
+    text = (r.json()["choices"][0]["message"].get("content") or "").strip()
+    if not text:
+        return jsonify(error="empty response"), 502
     return jsonify(letter=text)
 
 
