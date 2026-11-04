@@ -4,12 +4,12 @@ A Flutter app that estimates auto-rickshaw fares, checks whether a driver's dema
 
 ## 1. App features
 
-- Auto fare estimation (rule-based meter formula: ₹30 for the first 1.6 km, then ₹14 per km)
+- Auto fare estimation using the Telangana official tariff (₹30 for the first 1.6 km, ₹14 per extra km, night 11 pm-5 am at 1.5x, waiting charge ₹0.75/min)
 - GPS / route support and ride fare comparison
 - **ML fare estimate** shown next to the meter fare (accounts for night, peak hours, rain, waiting time)
-- **Fare verdict**: Fair / Slightly high / Overcharged, based on the demanded fare vs the higher of meter and ML estimate (limits: +10% and +30%, assumed values to be tuned)
-- Complaint records (verdict stored, voice note, share via any app) and SOS / trusted contact
-- Trip history saved on the device, with an optional "actual fare paid" field
+- **Fare verdict**: Fair / Slightly high / Overcharged, comparing the demanded fare with the official-tariff fare (limits: +10% and +30%, assumed values to be tuned)
+- Complaint records (verdict stored, voice note, share via any app, **AI-drafted complaint letter** through a small Flask proxy on Render that calls Groq) and SOS / trusted contact
+- Trip history saved on the device, with an optional "actual fare paid" field and an **Unusual fare** flag when the paid fare differs from the expected fare by more than 25%
 - Analytics dashboard (totals, averages, last six months)
 - CSV export of trip history (date, distance_km, fare_inr, route, actual_fare_inr, rain, wait_min)
 
@@ -36,6 +36,10 @@ A Flutter app that estimates auto-rickshaw fares, checks whether a driver's dema
 ## 3. Important limitation
 
 The model is trained on **synthetic data built on assumptions** (e.g. a 25% night surcharge), not on real auto fares. The numbers above show that the pipeline works; they do not measure accuracy on real trips. The ML estimate and the verdict limits should be treated as a demo until real data replaces them.
+
+## 3b. Official tariff and the role of the ML model
+
+The estimate and the verdict use the official Telangana tariff (Government Order of 2 Oct 2026: ₹30 for the first 1.6 km, ₹14 per extra km, night fare 1.5x between 11 pm and 5 am). The ML model is **not** used for the verdict: its night, peak and rain effects were assumptions in synthetic data, and the official tariff has no rain or peak surcharge. The ML estimate is shown only as a reference; its intended role is to learn what drivers actually charge once real trips are collected. The waiting charge (₹0.75/min) comes from the committee proposal and still needs to be checked against the final order.
 
 ## 4. Real data collection and retraining
 
