@@ -1,4 +1,7 @@
 import os
+import time
+from collections import defaultdict, deque
+
 import requests
 from flask import Flask, request, jsonify
 
@@ -20,6 +23,26 @@ SYSTEM = (
 )
 
 
+PER_IP_LIMIT = int(os.environ.get("PER_IP_LIMIT", "10"))
+GLOBAL_LIMIT = int(os.environ.get("GLOBAL_LIMIT", "300"))
+IP_HITS = defaultdict(deque)
+GLOBAL_HITS = deque()
+
+
+def allowed(ip):
+    now = time.time()
+    q = IP_HITS[ip]
+    while q and now - q[0] > 3600:
+        q.popleft()
+    while GLOBAL_HITS and now - GLOBAL_HITS[0] > 86400:
+        GLOBAL_HITS.popleft()
+    if len(q) >= PER_IP_LIMIT or len(GLOBAL_HITS) >= GLOBAL_LIMIT:
+        return False
+    q.append(now)
+    GLOBAL_HITS.append(now)
+    return True
+
+
 def clean(value, limit=300):
     return str(value if value is not None else "").strip()[:limit]
 
@@ -33,6 +56,9 @@ def health():
 def complaint_letter():
     if APP_TOKEN and request.headers.get("X-App-Token") != APP_TOKEN:
         return jsonify(error="unauthorized"), 401
+    fwd = request.headers.get("X-Forwarded-For", request.remote_addr or "")
+    if not allowed(fwd.split(",")[0].strip()):
+        return jsonify(error="rate limited"), 429
     if not GROQ_KEY:
         return jsonify(error="server not configured"), 500
 
