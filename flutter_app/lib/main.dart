@@ -446,7 +446,7 @@ class _MainScreenState extends State<MainScreen> {
         destinationLongitude = destLon;
         routePoints = points;
         distance.text = km.toStringAsFixed(2);
-        fare = km <= 1.6 ? 30 : 30 + (km - 1.6) * 14;
+        fare = OfficialTariff.fare(distanceKm: km, waitMin: waitNow);
         routeSummary =
             'Road distance: ${km.toStringAsFixed(2)} km\\nDestination: ${result['display_name']}';
       });
@@ -488,7 +488,7 @@ class _MainScreenState extends State<MainScreen> {
       message('Enter a valid distance greater than zero.');
       return;
     }
-    setState(() => fare = d <= 1.6 ? 30 : 30 + (d - 1.6) * 14);
+    setState(() => fare = OfficialTariff.fare(distanceKm: d, waitMin: waitNow));
   }
 
   Future<void> _editTrustedContact() async {
@@ -710,8 +710,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   String _verdictLabel(double asked, double meter, double km) {
-    final ml = FareModel.predict(distanceKm: km, rain: rainNow, waitMin: waitNow);
-    final ref = meter > ml ? meter : ml;
+    final ref = OfficialTariff.fare(distanceKm: km, waitMin: waitNow);
     if (asked <= ref * 1.10) return 'Fair fare';
     if (asked <= ref * 1.30) return 'Slightly high';
     return 'Overcharged';
@@ -1228,7 +1227,13 @@ class _MainScreenState extends State<MainScreen> {
                         final km = double.tryParse(distance.text.trim()) ?? 0.0;
                         final extraKm = (km - 1.6).clamp(0.0, double.infinity);
                         final extraCharge = extraKm * 14.0;
-                        final total = km <= 1.6 ? 30.0 : 30.0 + extraCharge;
+                        final regular = km <= 1.6 ? 30.0 : 30.0 + extraCharge;
+                        final nightExtra =
+                            OfficialTariff.isNight(DateTime.now())
+                            ? regular * (OfficialTariff.nightMultiplier - 1)
+                            : 0.0;
+                        final waitCharge = waitNow * OfficialTariff.waitPerMin;
+                        final total = regular + nightExtra + waitCharge;
                         Widget row(
                           String label,
                           String value, {
@@ -1277,6 +1282,16 @@ class _MainScreenState extends State<MainScreen> {
                               'Extra charge (₹14/km)',
                               '₹${extraCharge.toStringAsFixed(2)}',
                             ),
+                            if (nightExtra > 0)
+                              row(
+                                'Night charge (11 pm - 5 am, +50%)',
+                                '₹${nightExtra.toStringAsFixed(2)}',
+                              ),
+                            if (waitCharge > 0)
+                              row(
+                                'Waiting charge (₹0.75/min)',
+                                '₹${waitCharge.toStringAsFixed(2)}',
+                              ),
                             const Divider(),
                             row(
                               'Estimated total',
@@ -1362,9 +1377,8 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                     );
                   }
-                  final meter = fare!;
                   final ml = FareModel.predict(distanceKm: km, rain: rainNow, waitMin: waitNow);
-                  final ref = meter > ml ? meter : ml;
+                  final ref = OfficialTariff.fare(distanceKm: km, waitMin: waitNow);
                   final String label;
                   final Color color;
                   final IconData icon;
@@ -1381,10 +1395,10 @@ class _MainScreenState extends State<MainScreen> {
                     color = Colors.red.shade700;
                     icon = Icons.error_outline;
                   }
-                  final diff = asked - meter;
+                  final diff = asked - ref;
                   final diffText = diff >= 0
-                      ? '+₹${diff.toStringAsFixed(0)} over meter'
-                      : '₹${(-diff).toStringAsFixed(0)} under meter';
+                      ? '+₹${diff.toStringAsFixed(0)} over official'
+                      : '₹${(-diff).toStringAsFixed(0)} under official';
                   return Container(
                     margin: const EdgeInsets.only(top: 8),
                     padding: const EdgeInsets.all(12),
@@ -1409,7 +1423,7 @@ class _MainScreenState extends State<MainScreen> {
                                 ),
                               ),
                               Text(
-                                'Meter ₹${meter.toStringAsFixed(0)} · ML ₹${ml.toStringAsFixed(0)} · Demanded ₹${asked.toStringAsFixed(0)} ($diffText)',
+                                'Official ₹${ref.toStringAsFixed(0)} · ML ₹${ml.toStringAsFixed(0)} · Demanded ₹${asked.toStringAsFixed(0)} ($diffText)',
                                 style: const TextStyle(fontSize: 12),
                               ),
                             ],
