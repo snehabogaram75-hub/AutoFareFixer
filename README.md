@@ -13,10 +13,6 @@ Latest build: see the [v1.1.0 release](https://github.com/snehabogaram75-hub/Aut
 - **Trip history and analytics**: local trip log, totals, averages, last six months, an Unusual fare flag, and CSV export
 - **GPS / route support, ride fare comparison, SOS and trusted contact**
 
-## Screenshots
-
-<p align="center"><img src="docs/screenshot-1.png" width="210"> <img src="docs/screenshot-2.png" width="210"> <img src="docs/screenshot-3.png" width="210"></p>
-
 ## How it works
 
     Flutter app  --->  Flask proxy (Render)  --->  Groq LLM
