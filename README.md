@@ -60,6 +60,16 @@ Retrain the fare model on real trips (export the CSV from the app first; it need
 
 The notebook in data_science/ compares a baseline, Linear Regression and Random Forest on a 1,500-row synthetic dataset (MAE, RMSE, R2). Linear Regression is used in the app because its coefficients can be embedded in Dart without a server.
 
+## Help improve the model
+
+The ML estimate gets useful only with real rides. If you take autos in Telangana:
+
+1. Install the APK from the [latest release](https://github.com/snehabogaram75-hub/AutoFareFixer/releases/latest) (allow "Install unknown apps").
+2. After each ride, enter the distance, tap Estimate fare, type the amount you actually paid in "Actual fare paid" and tap Save current trip. Turn on "Raining now?" and add waiting minutes if they applied.
+3. When you have a few trips, tap Export CSV and send the file to the maintainer.
+
+Privacy: trips stay on your phone until you share the CSV. The route column can contain place names, so open the file and delete that column if you prefer. Only the distance, time and fare are needed.
+
 ## Limitations (please read)
 
 - The ML model is trained on **synthetic data built on assumptions**, so its scores show the pipeline works, not that it predicts real fares. The verdict does not depend on it.
