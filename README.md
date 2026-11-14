@@ -64,6 +64,6 @@ The notebook in data_science/ compares a baseline, Linear Regression and Random 
 
 - The ML model is trained on **synthetic data built on assumptions**, so its scores show the pipeline works, not that it predicts real fares. The verdict does not depend on it.
 - Verdict limits (+10% and +30%) and the Unusual fare limit (25%) are assumed values to be tuned on real trips.
-- The tariff follows the Telangana Government Order of 2 Oct 2026 as reported in the press. The waiting charge (0.75 INR per minute) comes from a committee proposal and is not verified against the final order. Tariffs can change.
+- The tariff follows the Telangana Government Order of 2 Oct 2026 as reported in the press. The waiting charge (0.75 INR per minute) is part of it too. The order text itself was not checked, luggage charges are not modelled, and tariffs can change.
 - Complaint letters are drafts for the user; nothing is sent to any authority.
 - The free Render backend sleeps when idle, so the first letter request can take up to a minute.

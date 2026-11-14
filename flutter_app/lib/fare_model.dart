@@ -34,8 +34,8 @@ class FareModel {
 
 /// Telangana auto-rickshaw tariff (Government Order of 2 Oct 2026):
 /// 30 INR for the first 1.6 km, 14 INR per extra km, night (23:00-05:00) = 1.5x.
-/// The waiting charge of 0.75 INR/min comes from the committee proposal;
-/// verify it against the final order before relying on it.
+/// The waiting (detention) charge of 0.75 INR/min is also in the final order
+/// according to press reports; luggage charges are not modelled.
 class OfficialTariff {
   static const double baseFare = 30;
   static const double baseKm = 1.6;

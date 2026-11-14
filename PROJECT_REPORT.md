@@ -39,7 +39,7 @@ The model is trained on **synthetic data built on assumptions** (e.g. a 25% nigh
 
 ## 3b. Official tariff and the role of the ML model
 
-The estimate and the verdict use the official Telangana tariff (Government Order of 2 Oct 2026: ₹30 for the first 1.6 km, ₹14 per extra km, night fare 1.5x between 11 pm and 5 am). The ML model is **not** used for the verdict: its night, peak and rain effects were assumptions in synthetic data, and the official tariff has no rain or peak surcharge. The ML estimate is shown only as a reference; its intended role is to learn what drivers actually charge once real trips are collected. The waiting charge (₹0.75/min) comes from the committee proposal and still needs to be checked against the final order.
+The estimate and the verdict use the official Telangana tariff (Government Order of 2 Oct 2026: ₹30 for the first 1.6 km, ₹14 per extra km, night fare 1.5x between 11 pm and 5 am). The ML model is **not** used for the verdict: its night, peak and rain effects were assumptions in synthetic data, and the official tariff has no rain or peak surcharge. The ML estimate is shown only as a reference; its intended role is to learn what drivers actually charge once real trips are collected. The waiting charge (₹0.75/min) is also part of the final order according to press reports; luggage charges (₹0.50 per package) are not modelled.
 
 ## 4. Real data collection and retraining
 
