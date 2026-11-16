@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://snehabogaram75-hub.github.io/AutoFareFixer/sitemap.xml
