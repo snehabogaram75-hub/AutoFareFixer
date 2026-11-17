@@ -2011,9 +2011,19 @@ class _TripHistoryCardState extends State<TripHistoryCard> {
           t['wait_min'] ?? 0,
         ].join(','));
       }
+      final csv = rows.join('\n');
+      if (kIsWeb) {
+        final data = XFile.fromData(
+          Uint8List.fromList(utf8.encode(csv)),
+          mimeType: 'text/csv',
+          name: 'autofarefixer_trips.csv',
+        );
+        await data.saveTo('autofarefixer_trips.csv');
+        return;
+      }
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/autofarefixer_trips.csv');
-      await file.writeAsString(rows.join('\n'));
+      await file.writeAsString(csv);
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path)],
