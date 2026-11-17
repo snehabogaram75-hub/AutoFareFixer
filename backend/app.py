@@ -7,6 +7,19 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+ALLOWED_ORIGINS = {"https://snehabogaram75-hub.github.io"}
+
+
+@app.after_request
+def add_cors(resp):
+    origin = request.headers.get("Origin", "")
+    if origin in ALLOWED_ORIGINS:
+        resp.headers["Access-Control-Allow-Origin"] = origin
+        resp.headers["Access-Control-Allow-Headers"] = "Content-Type, X-App-Token"
+        resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        resp.headers["Vary"] = "Origin"
+    return resp
+
 GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
 MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
 APP_TOKEN = os.environ.get("APP_TOKEN", "")
