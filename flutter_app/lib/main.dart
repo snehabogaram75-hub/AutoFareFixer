@@ -365,6 +365,9 @@ class _MainScreenState extends State<MainScreen> {
         'Current location found: ${position.latitude.toStringAsFixed(5)}, '
         '${position.longitude.toStringAsFixed(5)}. Enter your destination to estimate the road fare.',
       );
+      if (destination.text.trim().isNotEmpty) {
+        unawaited(findRouteAndFare());
+      }
     } catch (e) {
       if (mounted) {
         message('Could not get location. Check permission and try again.');
@@ -374,8 +377,8 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> findRouteAndFare() async {
     if (latitude == null || longitude == null) {
-      message('First tap Get Current Location.');
-      return;
+      await getCurrentLocation();
+      if (latitude == null || longitude == null) return;
     }
     final place = destination.text.trim();
     if (place.isEmpty) {
