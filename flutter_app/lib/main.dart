@@ -237,7 +237,8 @@ class _MainScreenState extends State<MainScreen> {
   final demanded = TextEditingController();
   bool rainNow = false;
   final waitCtrl = TextEditingController();
-  double get waitNow => double.tryParse(waitCtrl.text.trim()) ?? 0.0;
+  double get waitNow =>
+      (double.tryParse(waitCtrl.text.trim()) ?? 0.0).clamp(0.0, 600.0).toDouble();
   final notes = TextEditingController();
   double? fare;
   double? latitude;
