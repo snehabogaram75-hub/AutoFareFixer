@@ -1308,7 +1308,7 @@ class _MainScreenState extends State<MainScreen> {
                             ),
                             const SizedBox(height: 6),
                             const Text(
-                              'Estimate only; actual fare may vary.',
+                              'Estimate only; actual fare may vary. Tariff: Telangana order of 2 Oct 2026. The ML estimate is a practice model trained on synthetic data; the official fare is the reference.',
                               style: TextStyle(fontSize: 11),
                             ),
                           ],
@@ -1529,7 +1529,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'SOS is not connected to emergency services in this version.',
+                'The SOS button opens your phone dialer for 112 after you confirm. The app does not contact anyone automatically.',
               ),
               const SizedBox(height: 12),
               SizedBox(
