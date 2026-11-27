@@ -16,6 +16,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'fare_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'plate_reader.dart';
 
 void main() => runApp(const AutoFareFixerApp());
 
@@ -800,6 +803,44 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  Future<void> _scanPlate() async {
+    if (kIsWeb) {
+      message('Plate scan works in the Android app.');
+      return;
+    }
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1600,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+      final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
+      try {
+        final result = await recognizer.processImage(
+          InputImage.fromFilePath(picked.path),
+        );
+        final found = extractPlate(result.text);
+        if (!mounted) return;
+        if (found == null) {
+          message(
+            'Could not read a plate number. Try a closer, well-lit photo or type it.',
+          );
+          return;
+        }
+        setState(() => plate.text = found);
+        message('Plate read: $found. Please check it.');
+      } finally {
+        await recognizer.close();
+        try {
+          await File(picked.path).delete();
+        } catch (_) {}
+      }
+    } catch (_) {
+      if (mounted) message('Could not scan the plate. You can type it instead.');
+    }
+  }
+
   void addComplaint() {
     final d = double.tryParse(distance.text.trim());
     final requested = double.tryParse(demanded.text.trim());
@@ -1353,9 +1394,16 @@ class _MainScreenState extends State<MainScreen> {
               TextField(
                 controller: plate,
                 textCapitalization: TextCapitalization.characters,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Auto registration number',
-                  prefixIcon: Icon(Icons.directions_car_outlined),
+                  prefixIcon: const Icon(Icons.directions_car_outlined),
+                  suffixIcon: kIsWeb
+                      ? null
+                      : IconButton(
+                          tooltip: 'Scan number plate',
+                          icon: const Icon(Icons.photo_camera_outlined),
+                          onPressed: _scanPlate,
+                        ),
                 ),
               ),
               const SizedBox(height: 12),
